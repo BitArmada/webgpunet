@@ -286,15 +286,6 @@ export default async function createBackground(canvas, width){
         await activate(Math.floor((x/canvas.width)*GRID_WIDTH), Math.floor((y/canvas.height)*GRID_HEIGHT), 1)
     })
 
-    async function updateInput(){
-        var data = await readNetwork();
-        for (i in input){
-            data[positionToIndex(input[i].x, input[i].y)] = input[i].value;
-        }
-
-        await device.queue.writeBuffer(networkBufferStorage[step % 2], 0, data);
-    }
-
     function update() {
         const encoder = device.createCommandEncoder();
 
@@ -338,11 +329,10 @@ export default async function createBackground(canvas, width){
         device.queue.submit([encoder.finish()]);
     }
 
-    setInterval(update, UPDATE_INTERVAL);
-
     async function loadFile(src){
         const response = await fetch(src);
         const data = await response.text();
         return data;
     }
+    return {update, readNetwork, positionToIndex, activate};
 }

@@ -46,7 +46,7 @@ fn getConnection(n: i32) -> vec2f {
 }
 
 fn updateNeuron(index: u32){
-    const sDecay = f32(0.99);
+    const sDecay = f32(0.976);
     const fDecay = f32(0.9);
     const activation = f32(0.2);
 
@@ -86,7 +86,7 @@ fn computeMain(@builtin(global_invocation_id) cell: vec3u) {
                 const MAXWEIGHT = 0.1;
                 const tmax = 1; // max training function value
                 const tmin = -0.2; // min training function value
-                const LR = 0.5;
+                const LR = 0.6;
                 // const rThreshold = 10.5; // rienforcement threshold
                 // const fDecay = Math.pow(-tmin/(tmax-tmin), 1/rThreshold);
                 networkOut[connection].connections[w] += ((networkIn[i].fired*(tmax-tmin)+tmin)) * (MAXWEIGHT-(networkIn[connection].connections[w])) * LR;

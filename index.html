@@ -10,7 +10,16 @@
             const canvas = document.getElementById('canvas');
             canvas.width = window.innerWidth;
             canvas.height = canvas.width//window.innerHeight;
-            createBackground(canvas,512);
+            var stuff = await createBackground(canvas,400);
+            stuff.update();
+
+            function loop(){
+                stuff.update();
+                requestAnimationFrame(loop);
+            }
+            loop();
+
+            await stuff.activate(200,200,1)
          </script>
     </head>
     <body>
