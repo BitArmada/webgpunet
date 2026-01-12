@@ -1,5 +1,5 @@
 
-const computeShaderCode = `struct Neuron{
+const computeShaderCode = (LR) => {return `struct Neuron{
     state: f32,
     fired: f32,
     connections: array<f32, 8>,
@@ -87,7 +87,7 @@ fn computeMain(@builtin(global_invocation_id) cell: vec3u) {
                 const MAXWEIGHT = 0.1;
                 const tmax = 1; // max training function value
                 const tmin = -0.2; // min training function value
-                const LR = 0.6;
+                const LR = ${LR};
                 // const rThreshold = 10.5; // rienforcement threshold
                 // const fDecay = Math.pow(-tmin/(tmax-tmin), 1/rThreshold);
                 networkOut[connection].connections[w] += ((networkIn[i].fired*(tmax-tmin)+tmin)) * (MAXWEIGHT-(networkIn[connection].connections[w])) * LR;
@@ -101,7 +101,7 @@ fn computeMain(@builtin(global_invocation_id) cell: vec3u) {
     // networkOut[i].connections[0] = f32((cord.x+1)/grid.x);
     // networkOut[i].connections[1] = f32((cord.y+1)/grid.y);
 
-}`
+}`}
 
 const renderShaderCode = `
 struct Neuron{
@@ -149,7 +149,7 @@ fn fragmentMain(input: VertexOutput) -> @location(0) vec4f {
     return input.color;
 }`
 
-export default async function createBackground(canvas, width){
+export default async function createBackground(canvas, width, LR){
     if (!navigator.gpu) throw Error("WebGPU not supported.");
 
     const adapter = await navigator.gpu.requestAdapter();
@@ -253,7 +253,7 @@ export default async function createBackground(canvas, width){
     // Create the compute shader that will process the game of life simulation.
     const simulationShaderModule = device.createShaderModule({
         label: "Life simulation shader",
-        code: computeShaderCode
+        code: computeShaderCode(LR??0.6)
     });
 
     // Create a compute pipeline that updates the game state.
